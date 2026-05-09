@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Podatności</title>
+</head>
+<body>
+    <a href="{% url 'create_vulnerability' %}">+ Nowe zgłoszenie</a>
+    <hr>
+    {% for vulnerability in vulnerabilities %}
+        <div>
+            <h2>
+                <a href="{% url 'vulnerability_detail' vulnerability.id %}">
+                {{ vulnerability.title }}
+                   </a>
+            </h2>
+            <p>{{ vulnerability.description }}</p>
+            <p>Severity: {{ vulnerability.severity }}</p>
+            <p>Status: {{ vulnerability.status }}</p>
+            <p>Project: {{ vulnerability.project }}</p>
+            <p>Reporter: {{ vulnerability.reporter }}</p>
+            <p>Created: {{ vulnerability.created_at }}</p>
+        </div>
+        <hr>
+    {% empty %}
+        <p>Brak podatności.</p>
+    {% endfor %}
+</body>
+</html>

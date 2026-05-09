@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>{{vulnerability.title}}</h1>
+    <p>{{ vulnerability.project }}</p>
+    <p>{{ vulnerability.created_at }}</p>
+    <p>{{vulnerability.severity}}</p>
+    <p>{{vulnerability.status}}</p>
+    <p>{{vulnerability.reporter}}</p>
+    <h2>Description</h2>
+    <p>{{vulnerability.description}}</p>
+    <a href="{% url 'index' %}">Wróć</a>
+    <form method="POST">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <input type="submit" name="comment_submit" value="Dodaj komentarz">
+    </form>
+    <form method="POST">
+    {% csrf_token %}
+    {{ status_form.as_p }}
+    <button type="submit" name="status_submit">Zmień status</button>
+</form>
+    {% for comment in comments %}
+        <p> {{comment.author}} </p>
+        <p> {{comment.content}} </p>
+        <p> {{comment.created_at}} </p>
+    {% empty %}
+        <p>Brak komentarzy</p>
+    {% endfor %}
+</body>
+</html>
