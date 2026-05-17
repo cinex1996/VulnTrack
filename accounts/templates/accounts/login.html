@@ -5,12 +5,12 @@
 
 <form method="post">
     {% csrf_token %}
+    <label for="">username</label>
+    <input type="text" name="username" id="">
+    <label for="">Password</label>
+    <input type="password" name="password" id="">
 
-    {{ form.as_p }}
-
-    <button type="submit" class="btn btn-primary">
-        Login
-    </button>
+    <input type="submit" class="btn btn-primary" value="Login">
 </form>
 
 <p class="mt-3">

@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Vulnerabilities</h1>
 
-    <a href="#" class="btn btn-primary">
+    <a href="{% url 'create_vulnerability' %}" class="btn btn-primary">
         Create Vulnerability
     </a>
 </div>
@@ -104,6 +104,11 @@
             </td>
             <td>{{ vulnerability.project }}</td>
             <td>{{ vulnerability.created_at }}</td>
+            <td>{% if request.user.is_staff %}
+        <a href="{% url 'delete_vulnerability' id=vulnerability.id %}" class="btn btn-danger">
+    Delete
+</a>
+    {% endif %}</td>
         </tr>
 
     {% endfor %}

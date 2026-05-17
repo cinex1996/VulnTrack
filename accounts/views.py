@@ -1,11 +1,10 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 from accounts.forms import RegisterForm
 from django.contrib.auth import login, authenticate
 
-
-# Create your views here.
 def register_view(request):
     if request.method == 'POST':
         register_form = RegisterForm(request.POST)
@@ -16,7 +15,7 @@ def register_view(request):
 
     else:
         register_form = RegisterForm()
-        return render(request, 'accounts/register.html', {'register_form': register_form})
+    return render(request, 'accounts/register.html', {'register_form': register_form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -26,6 +25,5 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return redirect('index')
-        else:
-            return render(request, 'accounts/login.html')
+    return render(request, 'accounts/login.html')
 

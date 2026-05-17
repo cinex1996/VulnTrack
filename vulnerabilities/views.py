@@ -90,7 +90,7 @@ def update_vulnerability(request,id):
 @login_required
 def delete_vulnerability(request,id):
     vulnerability = get_object_or_404(Vulnerability, id=id)
-    if request.user != vulnerability.reporter:
+    if not request.user.is_staff:
         return HttpResponseForbidden("Nie masz uprawnień")
     if request.method == 'POST':
         vulnerability.delete()
