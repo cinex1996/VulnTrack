@@ -38,3 +38,13 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+class History(models.Model):
+    vulnerability = models.ForeignKey(Vulnerability, on_delete=models.CASCADE, related_name="history")
+    old_status = models.CharField(max_length=20, choices=Vulnerability.Status.choices)
+    new_status = models.CharField(max_length=20, choices=Vulnerability.Status.choices)
+    changed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.vulnerability.title}: {self.old_status} -> {self.new_status} by {self.changed_by}"

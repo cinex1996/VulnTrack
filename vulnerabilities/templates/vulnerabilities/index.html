@@ -1,29 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Podatności</title>
-</head>
-<body>
-    <a href="{% url 'create_vulnerability' %}">+ Nowe zgłoszenie</a>
-    <hr>
-    {% for vulnerability in vulnerabilities %}
-        <div>
-            <h2>
-                <a href="{% url 'vulnerability_detail' vulnerability.id %}">
-                {{ vulnerability.title }}
-                   </a>
-            </h2>
-            <p>{{ vulnerability.description }}</p>
-            <p>Severity: {{ vulnerability.severity }}</p>
-            <p>Status: {{ vulnerability.status }}</p>
-            <p>Project: {{ vulnerability.project }}</p>
-            <p>Reporter: {{ vulnerability.reporter }}</p>
-            <p>Created: {{ vulnerability.created_at }}</p>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Vulnerabilities</h1>
+
+    <a href="#" class="btn btn-primary">
+        Create Vulnerability
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Total Vulnerabilities</h5>
+                <h2>{{ total_vulnerabilities }}</h2>
+            </div>
         </div>
-        <hr>
-    {% empty %}
-        <p>Brak podatności.</p>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Critical Vulnerabilities</h5>
+                <h2>{{ critical_vulnerabilities }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Fixed Vulnerabilities</h5>
+                <h2>{{ fixed_vulnerabilities }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Open Vulnerabilities</h5>
+                <h2>{{ open_vulnerabilities }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<table class="table table-hover bg-white shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Project</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for vulnerability in vulnerabilities %}
+
+        <tr>
+            <td>
+                <a href="{% url 'vulnerability_detail' vulnerability.id %}">
+                    {{ vulnerability.title }}
+                </a>
+            </td>
+
+            <td>
+                {% if vulnerability.severity == 'critical' %}
+                    <span class="badge bg-danger">{{ vulnerability.severity }}</span>
+                {% elif vulnerability.severity == 'high' %}
+                    <span class="badge bg-warning text-dark"> {{ vulnerability.severity }}</span>
+                {% elif vulnerability.severity == 'medium' %}
+                    <span class="badge bg-primary"> {{ vulnerability.severity }}</span>
+                {% else %}
+                    <span class="badge bg-success">{{ vulnerability.severity }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if vulnerability.status == 'new' %}
+                    <span class="badge bg-secondary">{{ vulnerability.status }}</span>
+
+                {% elif vulnerability.status == 'triaged' %}
+                    <span class="badge bg-info text-dark">{{ vulnerability.status }}</span>
+
+                {% elif vulnerability.status == 'accepted' %}
+                    <span class="badge bg-primary">{{ vulnerability.status }}</span>
+
+                {% elif vulnerability.status == 'fixed' %}
+                    <span class="badge bg-success">{{ vulnerability.status }}</span>
+
+                {% elif vulnerability.status == 'rejected' %}
+                    <span class="badge bg-secondary">{{ vulnerability.status }}</span>
+
+                {% else %}
+                    <span class="badge bg-dark">{{ vulnerability.status }}</span>
+                {% endif %}
+            </td>
+            <td>{{ vulnerability.project }}</td>
+            <td>{{ vulnerability.created_at }}</td>
+        </tr>
+
     {% endfor %}
-</body>
-</html>
+
+    </tbody>
+</table>
+
+{% endblock %}
