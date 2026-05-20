@@ -96,3 +96,4 @@ def delete_vulnerability(request,id):
         vulnerability.delete()
         return redirect("index")
     return render(request, 'vulnerabilities/delete.html', {'vulnerability': vulnerability})
+

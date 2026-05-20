@@ -48,3 +48,4 @@ class History(models.Model):
 
     def __str__(self):
         return f"{self.vulnerability.title}: {self.old_status} -> {self.new_status} by {self.changed_by}"
+
