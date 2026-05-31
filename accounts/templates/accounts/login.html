@@ -1,21 +1,41 @@
 {% extends 'base.html' %}
+
 {% block content %}
 
-<h1>Login</h1>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
 
-<form method="post">
-    {% csrf_token %}
-    <label for="">username</label>
-    <input type="text" name="username" id="">
-    <label for="">Password</label>
-    <input type="password" name="password" id="">
+        <div class="text-center mb-4">
+            <i class="bi bi-shield-lock-fill text-dark" style="font-size:2.5rem;"></i>
+            <h4 class="fw-bold mt-2 mb-0">VulnTrack</h4>
+            <small class="text-muted">Zaloguj się do swojego konta</small>
+        </div>
 
-    <input type="submit" class="btn btn-primary" value="Login">
-</form>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold small">Nazwa użytkownika</label>
+                        <input type="text" name="username" id="username" class="form-control" placeholder="Wpisz nazwę użytkownika">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold small">Hasło</label>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Wpisz hasło">
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Zaloguj
+                    </button>
+                </form>
+            </div>
+        </div>
 
-<p class="mt-3">
-    Don't have an account?
-    <a href="{% url 'register' %}">Register</a>
-</p>
+        <p class="text-center text-muted small mt-3">
+            Nie masz konta?
+            <a href="{% url 'register' %}" class="text-dark fw-semibold">Zarejestruj się</a>
+        </p>
+
+    </div>
+</div>
 
 {% endblock %}

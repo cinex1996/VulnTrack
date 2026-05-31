@@ -15,10 +15,10 @@ class Notification(models.Model):
         related_name="notifications"
     )
 
-    actor = models.ForeignKey(
+    actor = models.ForeignKey( # sender
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name="notification_actor",
+        related_name="created_notifications",
         null=True,
         blank=True
     )

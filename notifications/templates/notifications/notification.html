@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0"><i class="bi bi-bell-fill me-2"></i>Powiadomienia</h5>
+    </div>
+    <ul class="list-group list-group-flush">
+        {% for notification in notifications %}
+            <li class="list-group-item {% if not notification.is_read %}bg-primary bg-opacity-10{% endif %}">
+                <div class="fw-semibold">{{ notification.title }}</div>
+                <div class="text-muted small">{{ notification.message }}</div>
+                {% if notification.url %}
+                    <a href="{{ notification.url }}" class="small text-primary">{{ notification.url }}</a>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li class="list-group-item text-center text-muted py-4">
+                <i class="bi bi-bell-slash d-block fs-4 mb-1"></i>
+                Brak powiadomień
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

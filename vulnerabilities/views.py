@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.core.mail import message
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
+from notifications.models import Notification
 from .forms import VulnerabilityForm, CommentForm, StatusUpdateForm
 from .models import Vulnerability, Comment, History
 
@@ -29,6 +31,7 @@ def vulnerability_detail(request,id):
     is_analyst = request.user.groups.filter(name='Analyst').exists()
     history  = vulnerability.history.all().order_by('-created_at')
     is_admin = request.user.is_superuser
+    comment_form = CommentForm()
     if request.method == 'POST':
         if "comment_submit" in request.POST:
             comment_form = CommentForm(request.POST)
@@ -37,7 +40,14 @@ def vulnerability_detail(request,id):
                 comment.author = request.user
                 comment.vulnerability = vulnerability
                 comment.save()
-                return redirect(vulnerability_detail, id=vulnerability.id)
+                if request.user != vulnerability.reporter:
+                    Notification.objects.create(recipient=vulnerability.reporter,
+                                                actor = request.user,
+                                                type = Notification.NotificationType.COMMENT,
+                                                title = "New comment",
+                                                message=f"{request.user.username} commented vulnerability: {vulnerability.title}",
+                                                url = f"/vulnerabilities/detail/{vulnerability.id}/")
+                return redirect("vulnerability_detail", id=vulnerability.id)
         elif 'status_submit' in request.POST and is_analyst:
             old_status = vulnerability.status
             status_form = StatusUpdateForm(request.POST, instance=vulnerability)
@@ -48,8 +58,6 @@ def vulnerability_detail(request,id):
                     History.objects.create(vulnerability=vulnerability, old_status=old_status,
                                                          new_status=new_status,changed_by=request.user)
                 return HttpResponseRedirect(request.path)
-    else:
-        comment_form = CommentForm()
 
     return render(request, 'vulnerabilities/detail.html', {'vulnerability': vulnerability,
                                                            'comments': comments, 'comment_form': comment_form,

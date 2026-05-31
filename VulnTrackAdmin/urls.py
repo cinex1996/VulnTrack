@@ -25,4 +25,5 @@ urlpatterns = [
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
     path('vulnerabilities/', include('vulnerabilities.urls')),
     path('accounts/', include('accounts.urls')),
+    path('notifications/', include('notifications.urls')),
 ]

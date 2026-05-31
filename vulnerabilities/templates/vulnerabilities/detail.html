@@ -2,98 +2,161 @@
 
 {% block content %}
 
-<a href="{% url 'index' %}" class="btn btn-outline-secondary mb-3">
-    ← Back
-</a>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>{{ vulnerability.title }}</h1>
-
+<div class="d-flex align-items-center gap-3 mb-4">
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Wróć
+    </a>
     <div>
+        <h4 class="fw-bold mb-0">{{ vulnerability.title }}</h4>
+        <small class="text-muted">Szczegóły podatności</small>
+    </div>
+    <div class="ms-auto d-flex gap-2">
+        {% if vulnerability.severity == 'critical' %}
+            <span class="badge bg-danger fs-6">{{ vulnerability.severity }}</span>
+        {% elif vulnerability.severity == 'high' %}
+            <span class="badge bg-warning text-dark fs-6">{{ vulnerability.severity }}</span>
+        {% elif vulnerability.severity == 'medium' %}
+            <span class="badge bg-primary fs-6">{{ vulnerability.severity }}</span>
+        {% else %}
+            <span class="badge bg-success fs-6">{{ vulnerability.severity }}</span>
+        {% endif %}
 
+        {% if vulnerability.status == 'new' %}
+            <span class="badge bg-secondary fs-6">{{ vulnerability.status }}</span>
+        {% elif vulnerability.status == 'triaged' %}
+            <span class="badge bg-info text-dark fs-6">{{ vulnerability.status }}</span>
+        {% elif vulnerability.status == 'accepted' %}
+            <span class="badge bg-primary fs-6">{{ vulnerability.status }}</span>
+        {% elif vulnerability.status == 'fixed' %}
+            <span class="badge bg-success fs-6">{{ vulnerability.status }}</span>
+        {% elif vulnerability.status == 'rejected' %}
+            <span class="badge bg-secondary fs-6">{{ vulnerability.status }}</span>
+        {% else %}
+            <span class="badge bg-dark fs-6">{{ vulnerability.status }}</span>
+        {% endif %}
     </div>
 </div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
-        <h4>Description</h4>
-        <p>{{ vulnerability.description }}</p>
-    </div>
-</div>
+<div class="row g-4">
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
-        <h4>Details</h4>
-        <p><strong>Project:</strong> {{ vulnerability.project }}</p>
-        <p><strong>Reporter:</strong> {{ vulnerability.reporter }}</p>
-        <p><strong>Created:</strong> {{ vulnerability.created_at }}</p>
-    </div>
-</div>
-{% if is_analyst %}
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h4>Change Status</h4>
+    <!-- Left column -->
+    <div class="col-lg-8">
 
-            <form method="POST">
-                {% csrf_token %}
-                {{ status_form.as_p }}
-
-                <button type="submit" name="status_submit" class="btn btn-primary">
-                    Change Status
-                </button>
-            </form>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="bi bi-file-text me-2 text-muted"></i>Opis
+            </div>
+            <div class="card-body text-muted">
+                {{ vulnerability.description }}
+            </div>
         </div>
-    </div>
-{% endif %}
-{% if is_admin %}
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h4>History Status</h4>
-            {% for item in history %}
-                <p>
-                    {{ item.old_status }} -> {{ item.new_status }}
-                    by {{ item.changed_by }}
-                    at {{ item.created_at }}
-                </p>
-            {% empty %}
-                <p>No status history yet.</p>
-            {% endfor %}
+
+        {% if is_analyst %}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="bi bi-arrow-repeat me-2 text-muted"></i>Zmień status
+            </div>
+            <div class="card-body">
+                <form method="POST" class="d-flex gap-2 align-items-end">
+                    {% csrf_token %}
+                    {{ status_form.as_p }}
+                    <button type="submit" name="status_submit" class="btn btn-dark">
+                        Zapisz
+                    </button>
+                </form>
+            </div>
         </div>
+        {% endif %}
+
+        <!-- Add comment -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="bi bi-chat-left-text me-2 text-muted"></i>Dodaj komentarz
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit" name="comment_submit" class="btn btn-dark mt-2">
+                        <i class="bi bi-send me-1"></i>Wyślij
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <h6 class="fw-semibold text-muted mb-3">
+            <i class="bi bi-chat-dots me-1"></i>Komentarze
+        </h6>
+        {% for comment in comments %}
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-person-circle fs-5 text-muted"></i>
+                    <strong class="small">{{ comment.author }}</strong>
+                    <small class="text-muted ms-auto">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                </div>
+                <p class="mb-0 text-muted small">{{ comment.content }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted small">Brak komentarzy.</p>
+        {% endfor %}
+
     </div>
-{% endif %}
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
-        <h4>Add Comment</h4>
+    <!-- Right column -->
+    <div class="col-lg-4">
 
-        <form method="POST">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="bi bi-info-circle me-2 text-muted"></i>Szczegóły
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted small">Projekt</span>
+                    <span class="small fw-semibold">{{ vulnerability.project }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted small">Zgłaszający</span>
+                    <span class="small fw-semibold">{{ vulnerability.reporter }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted small">Data zgłoszenia</span>
+                    <span class="small fw-semibold">{{ vulnerability.created_at|date:"d.m.Y" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted small">Ostatnia zmiana</span>
+                    <span class="small fw-semibold">{{ vulnerability.updated_at|date:"d.m.Y" }}</span>
+                </li>
+            </ul>
+        </div>
 
-            <button type="submit" name="comment_submit" class="btn btn-success">
-                Add Comment
-            </button>
-        </form>
+        {% if is_admin %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="bi bi-clock-history me-2 text-muted"></i>Historia statusów
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for item in history %}
+                <li class="list-group-item">
+                    <div class="d-flex gap-2 align-items-center">
+                        <span class="badge bg-secondary small">{{ item.old_status }}</span>
+                        <i class="bi bi-arrow-right text-muted small"></i>
+                        <span class="badge bg-primary small">{{ item.new_status }}</span>
+                    </div>
+                    <div class="text-muted" style="font-size:0.75rem;">
+                        {{ item.changed_by }} &middot; {{ item.created_at|date:"d.m.Y H:i" }}
+                    </div>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-muted small">Brak historii.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
     </div>
 </div>
-
-<h4 class="mb-3">Comments</h4>
-
-{% for comment in comments %}
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <strong>{{ comment.author }}</strong>
-            <small class="text-muted d-block">
-                {{ comment.created_at }}
-            </small>
-
-            <p class="mt-2 mb-0">
-                {{ comment.content }}
-            </p>
-        </div>
-    </div>
-{% empty %}
-    <p class="text-muted">No comments yet.</p>
-{% endfor %}
 
 {% endblock %}
