@@ -1,20 +1,23 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 
 from notifications.models import Notification
 
 
-@login_required
+# Create your views here.
 def notification_view(request):
-    notifications = Notification.objects.filter(recipient=request.user)
-    return render(request, "notifications/notification.html", {'notifications': notifications})
+    no_notifications_message = "Nie ma żadnych powiadomień"
+    notifications = Notification.objects.all()
+    if request.method == "GET":
+        if not notifications.exists():
+            return render(request, "notifications/notification.html",{'no_notifications_message':no_notifications_message})
+    return render(request, "notifications/notification.html",{'notifications':notifications})
 
-
-@login_required
-def mark_as_read(request, pk):
-    notification = get_object_or_404(Notification, pk=pk, recipient=request.user)
-    notification.is_read = True
-    notification.save()
-    if notification.url:
-        return redirect(notification.url)
-    return redirect('notifications')
+def mark_as_read(request,pk):
+    no_notifications_message = "Nie istnieje takie powiadomienie"
+    try:
+        notification = Notification.objects.get(pk=pk)
+        notification.is_read = True
+        notification.save()
+    except Notification.DoesNotExist:
+        return render(request, "notifications/notification.html",{'notification':no_notifications_message})
+    return render(request, "notifications/notification.html")
