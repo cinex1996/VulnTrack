@@ -5,7 +5,7 @@ from vulnerabilities.models import Vulnerability, Comment
 class VulnerabilityForm(forms.ModelForm):
     class Meta:
         model = Vulnerability
-        fields = ('title', 'description', 'severity', 'project')
+        fields = ('title', 'description', 'severity', 'project','status')
 
 class CommentForm(forms.ModelForm):
     class Meta:
