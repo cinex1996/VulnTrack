@@ -11,6 +11,10 @@ class VulnTrackAccounts(AbstractUser):
                             choices=Roles,
                             default=Roles.RESEARCHER)
 
+    @property
+    def is_moderator(self):
+        return self.role in [self.Roles.MODERATOR, self.Roles.ADMIN]
+
 
 
 

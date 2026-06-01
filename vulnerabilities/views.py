@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.core.mail import message
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -8,30 +7,34 @@ from .forms import VulnerabilityForm, CommentForm, StatusUpdateForm
 from .models import Vulnerability, Comment, History
 
 
-# Create your views here.
 @login_required
 def index(request):
     vulnerabilities = Vulnerability.objects.all()
     total_vulnerabilities = vulnerabilities.count()
     critical_vulnerabilities = vulnerabilities.filter(severity="critical").count()
     fixed_vulnerabilities = vulnerabilities.filter(status="fixed").count()
-    open_vulnerabilities = vulnerabilities.filter(status="open").count()
-    return render(request, 'vulnerabilities/index.html', {'vulnerabilities': vulnerabilities,
-                                                          'total_vulnerabilities': total_vulnerabilities,
-                                                          'critical_vulnerabilities': critical_vulnerabilities,
-                                                          'fixed_vulnerabilities': fixed_vulnerabilities,
-                                                          'open_vulnerabilities': open_vulnerabilities})
+    open_vulnerabilities = vulnerabilities.filter(
+        status__in=["new", "triaged", "accepted"]
+    ).count()
+    return render(request, 'vulnerabilities/index.html', {
+        'vulnerabilities': vulnerabilities,
+        'total_vulnerabilities': total_vulnerabilities,
+        'critical_vulnerabilities': critical_vulnerabilities,
+        'fixed_vulnerabilities': fixed_vulnerabilities,
+        'open_vulnerabilities': open_vulnerabilities,
+    })
 
 
 @login_required
-def vulnerability_detail(request,id):
+def vulnerability_detail(request, id):
     vulnerability = get_object_or_404(Vulnerability, id=id)
     comments = vulnerability.comment_set.all()
     status_form = StatusUpdateForm(instance=vulnerability)
-    is_analyst = request.user.groups.filter(name='Analyst').exists()
-    history  = vulnerability.history.all().order_by('-created_at')
-    is_admin = request.user.is_superuser
+    is_analyst = request.user.is_moderator
+    history = vulnerability.history.all().order_by('-created_at')
+    is_admin = request.user.is_moderator
     comment_form = CommentForm()
+
     if request.method == 'POST':
         if "comment_submit" in request.POST:
             comment_form = CommentForm(request.POST)
@@ -41,13 +44,16 @@ def vulnerability_detail(request,id):
                 comment.vulnerability = vulnerability
                 comment.save()
                 if request.user != vulnerability.reporter:
-                    Notification.objects.create(recipient=vulnerability.reporter,
-                                                actor = request.user,
-                                                type = Notification.NotificationType.COMMENT,
-                                                title = "New comment",
-                                                message=f"{request.user.username} commented vulnerability: {vulnerability.title}",
-                                                url = f"/vulnerabilities/detail/{vulnerability.id}/")
+                    Notification.objects.create(
+                        recipient=vulnerability.reporter,
+                        actor=request.user,
+                        type=Notification.NotificationType.COMMENT,
+                        title="Nowy komentarz",
+                        message=f"{request.user.username} skomentował podatność: {vulnerability.title}",
+                        url=f"/vulnerabilities/detail/{vulnerability.id}/",
+                    )
                 return redirect("vulnerability_detail", id=vulnerability.id)
+
         elif 'status_submit' in request.POST and is_analyst:
             old_status = vulnerability.status
             status_form = StatusUpdateForm(request.POST, instance=vulnerability)
@@ -55,15 +61,32 @@ def vulnerability_detail(request,id):
                 status_form.save()
                 new_status = vulnerability.status
                 if new_status != old_status:
-                    History.objects.create(vulnerability=vulnerability, old_status=old_status,
-                                                         new_status=new_status,changed_by=request.user)
+                    History.objects.create(
+                        vulnerability=vulnerability,
+                        old_status=old_status,
+                        new_status=new_status,
+                        changed_by=request.user,
+                    )
+                    if request.user != vulnerability.reporter:
+                        Notification.objects.create(
+                            recipient=vulnerability.reporter,
+                            actor=request.user,
+                            type=Notification.NotificationType.STATUS_CHANGE,
+                            title="Zmiana statusu",
+                            message=f"Status podatności '{vulnerability.title}' zmieniony z {old_status} na {new_status}.",
+                            url=f"/vulnerabilities/detail/{vulnerability.id}/",
+                        )
                 return HttpResponseRedirect(request.path)
 
-    return render(request, 'vulnerabilities/detail.html', {'vulnerability': vulnerability,
-                                                           'comments': comments, 'comment_form': comment_form,
-                                                           'status_form': status_form,'is_analyst':is_analyst,
-                                                           'history': history,
-                                                           'is_admin':is_admin})
+    return render(request, 'vulnerabilities/detail.html', {
+        'vulnerability': vulnerability,
+        'comments': comments,
+        'comment_form': comment_form,
+        'status_form': status_form,
+        'is_analyst': is_analyst,
+        'history': history,
+        'is_admin': is_admin,
+    })
 
 
 @login_required
@@ -81,7 +104,7 @@ def create_vulnerability(request):
 
 
 @login_required
-def update_vulnerability(request,id):
+def update_vulnerability(request, id):
     vulnerability = get_object_or_404(Vulnerability, id=id)
     if request.user != vulnerability.reporter:
         return HttpResponseForbidden("Nie masz uprawnień")
@@ -92,16 +115,15 @@ def update_vulnerability(request,id):
             return redirect("vulnerability_detail", id=vulnerability.id)
     else:
         form = VulnerabilityForm(instance=vulnerability)
-    return render(request, 'vulnerabilities/edit.html', {'form':form,'vulnerability': vulnerability})
+    return render(request, 'vulnerabilities/edit.html', {'form': form, 'vulnerability': vulnerability})
 
 
 @login_required
-def delete_vulnerability(request,id):
+def delete_vulnerability(request, id):
     vulnerability = get_object_or_404(Vulnerability, id=id)
-    if not request.user.is_staff:
+    if not request.user.is_moderator:
         return HttpResponseForbidden("Nie masz uprawnień")
     if request.method == 'POST':
         vulnerability.delete()
         return redirect("index")
     return render(request, 'vulnerabilities/delete.html', {'vulnerability': vulnerability})
-

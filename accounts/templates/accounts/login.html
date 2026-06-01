@@ -15,6 +15,9 @@
             <div class="card-body p-4">
                 <form method="post">
                     {% csrf_token %}
+                    {% if error %}
+                    <div class="alert alert-danger py-2 small">{{ error }}</div>
+                    {% endif %}
                     <div class="mb-3">
                         <label for="username" class="form-label fw-semibold small">Nazwa użytkownika</label>
                         <input type="text" name="username" id="username" class="form-control" placeholder="Wpisz nazwę użytkownika">
