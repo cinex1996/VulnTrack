@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.core.mail import message
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -28,7 +27,7 @@ def vulnerability_detail(request,id):
     vulnerability = get_object_or_404(Vulnerability, id=id)
     comments = vulnerability.comment_set.all()
     status_form = StatusUpdateForm(instance=vulnerability)
-    is_analyst = request.user.groups.filter(name='Analyst').exists()
+    is_analyst = request.user.role in ['moderator','admin']
     history  = vulnerability.history.all().order_by('-created_at')
     is_admin = request.user.is_superuser
     comment_form = CommentForm()
@@ -104,4 +103,3 @@ def delete_vulnerability(request,id):
         vulnerability.delete()
         return redirect("index")
     return render(request, 'vulnerabilities/delete.html', {'vulnerability': vulnerability})
-
