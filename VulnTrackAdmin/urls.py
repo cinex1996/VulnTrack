@@ -26,4 +26,5 @@ urlpatterns = [
     path('vulnerabilities/', include('vulnerabilities.urls')),
     path('accounts/', include('accounts.urls')),
     path('notifications/', include('notifications.urls')),
+    path('projects/', include('projects.urls')),
 ]

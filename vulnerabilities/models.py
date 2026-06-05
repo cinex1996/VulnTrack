@@ -5,6 +5,7 @@ from projects.models import Project
 # Create your models here.
 class Vulnerability(models.Model):
     class Status(models.TextChoices):
+        open = 'open', "OPEN"
         new = 'new','NEW'
         triaged = 'triaged','TRIAGED'
         accepted = 'accepted','ACCEPTED'
@@ -48,4 +49,3 @@ class History(models.Model):
 
     def __str__(self):
         return f"{self.vulnerability.title}: {self.old_status} -> {self.new_status} by {self.changed_by}"
-
