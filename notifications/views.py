@@ -20,3 +20,10 @@ def mark_as_read(request,pk):
     notification.is_read = True
     notification.save()
     return redirect("notifications")
+
+@login_required
+def mark_all_as_read(request):
+    if request.method == "GET":
+        return redirect("notifications")
+    notifications = Notification.objects.filter(recipient=request.user).update(is_read=True)
+    return redirect("notifications")
