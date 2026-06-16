@@ -16,6 +16,8 @@ def notification_view(request):
 
 @login_required
 def mark_as_read(request,pk):
+    if request.method == "GET":
+        return redirect("notifications")
     notification = get_object_or_404(Notification, pk=pk, recipient=request.user)
     notification.is_read = True
     notification.save()
