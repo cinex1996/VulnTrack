@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load vulnerability_badges %}
 
 {% block content %}
 
@@ -91,30 +92,10 @@
                         </a>
                     </td>
                     <td>
-                        {% if vulnerability.severity == 'critical' %}
-                            <span class="badge bg-danger">{{ vulnerability.severity }}</span>
-                        {% elif vulnerability.severity == 'high' %}
-                            <span class="badge bg-warning text-dark">{{ vulnerability.severity }}</span>
-                        {% elif vulnerability.severity == 'medium' %}
-                            <span class="badge bg-primary">{{ vulnerability.severity }}</span>
-                        {% else %}
-                            <span class="badge bg-success">{{ vulnerability.severity }}</span>
-                        {% endif %}
+                        <span class="badge {{ vulnerability.severity|severity_badge_class }}">{{ vulnerability.severity }}</span>
                     </td>
                     <td>
-                        {% if vulnerability.status == 'new' %}
-                            <span class="badge bg-secondary">{{ vulnerability.status }}</span>
-                        {% elif vulnerability.status == 'triaged' %}
-                            <span class="badge bg-info text-dark">{{ vulnerability.status }}</span>
-                        {% elif vulnerability.status == 'accepted' %}
-                            <span class="badge bg-primary">{{ vulnerability.status }}</span>
-                        {% elif vulnerability.status == 'fixed' %}
-                            <span class="badge bg-success">{{ vulnerability.status }}</span>
-                        {% elif vulnerability.status == 'rejected' %}
-                            <span class="badge bg-secondary">{{ vulnerability.status }}</span>
-                        {% else %}
-                            <span class="badge bg-dark">{{ vulnerability.status }}</span>
-                        {% endif %}
+                        <span class="badge {{ vulnerability.status|status_badge_class }}">{{ vulnerability.status }}</span>
                     </td>
                     <td class="text-muted small">{{ vulnerability.project }}</td>
                     <td class="text-muted small">{{ vulnerability.created_at|date:"d.m.Y" }}</td>
