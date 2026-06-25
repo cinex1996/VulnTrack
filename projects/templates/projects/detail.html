@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load vulnerability_badges %}
 
 {% block content %}
 
@@ -9,37 +10,37 @@
     </div>
     <div class="d-flex gap-2">
         <a href="{% url 'project_list' %}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i>Powrót
+            <i class="bi bi-arrow-left"></i>Powrót
         </a>
         {% if request.user.is_staff %}
-        <a href="{% url 'project_update' project.pk %}" class="btn btn-outline-dark btn-sm">
-            <i class="bi bi-pencil me-1"></i>Edytuj
+        <a href="{% url 'project_update' project.pk %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-pencil"></i>Edytuj
         </a>
         <a href="{% url 'project_delete' project.pk %}" class="btn btn-outline-danger btn-sm">
-            <i class="bi bi-trash me-1"></i>Usuń
+            <i class="bi bi-trash"></i>Usuń
         </a>
         {% endif %}
     </div>
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="card shadow-sm h-100">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+                <div class="rounded-3 bg-primary-subtle p-3">
                     <i class="bi bi-bug-fill text-primary fs-4"></i>
                 </div>
                 <div>
                     <div class="text-muted small">Podatności</div>
-                    <div class="fw-bold fs-4">{{ vulnerability_set.count }}</div>
+                    <div class="fw-bold fs-3">{{ vulnerability_set.count }}</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="card shadow-sm h-100">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-3 {% if project.is_active %}bg-success{% else %}bg-secondary{% endif %} bg-opacity-10 p-3">
+                <div class="rounded-3 {% if project.is_active %}bg-success-subtle{% else %}bg-secondary-subtle{% endif %} p-3">
                     <i class="bi bi-circle-fill {% if project.is_active %}text-success{% else %}text-secondary{% endif %} fs-4"></i>
                 </div>
                 <div>
@@ -49,10 +50,10 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="card shadow-sm h-100">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-3 bg-warning bg-opacity-10 p-3">
+                <div class="rounded-3 bg-warning-subtle p-3">
                     <i class="bi bi-calendar-fill text-warning fs-4"></i>
                 </div>
                 <div>
@@ -64,7 +65,7 @@
     </div>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card shadow-sm">
     <div class="card-header bg-dark text-white fw-semibold">
         Zgłoszone podatności
     </div>
@@ -72,7 +73,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th class="ps-4">Tytuł</th>
+                    <th class="ps-3">Tytuł</th>
                     <th>Poziom</th>
                     <th>Status</th>
                     <th>Data</th>
@@ -81,38 +82,18 @@
             <tbody>
                 {% for vuln in vulnerability_set %}
                 <tr>
-                    <td class="ps-4">
-                        <a href="{% url 'vulnerability_detail' vuln.id %}" class="fw-semibold text-dark text-decoration-none">
+                    <td class="ps-3">
+                        <a href="{% url 'vulnerability_detail' vuln.id %}" class="fw-semibold text-dark">
                             {{ vuln.title }}
                         </a>
                     </td>
                     <td>
-                        {% if vuln.severity == 'critical' %}
-                            <span class="badge bg-danger">{{ vuln.severity }}</span>
-                        {% elif vuln.severity == 'high' %}
-                            <span class="badge bg-warning text-dark">{{ vuln.severity }}</span>
-                        {% elif vuln.severity == 'medium' %}
-                            <span class="badge bg-primary">{{ vuln.severity }}</span>
-                        {% else %}
-                            <span class="badge bg-success">{{ vuln.severity }}</span>
-                        {% endif %}
+                        <span class="{{ vuln.severity|severity_badge_class }}">{{ vuln.severity }}</span>
                     </td>
                     <td>
-                        {% if vuln.status == 'new' %}
-                            <span class="badge bg-secondary">{{ vuln.status }}</span>
-                        {% elif vuln.status == 'triaged' %}
-                            <span class="badge bg-info text-dark">{{ vuln.status }}</span>
-                        {% elif vuln.status == 'accepted' %}
-                            <span class="badge bg-primary">{{ vuln.status }}</span>
-                        {% elif vuln.status == 'fixed' %}
-                            <span class="badge bg-success">{{ vuln.status }}</span>
-                        {% elif vuln.status == 'rejected' %}
-                            <span class="badge bg-secondary">{{ vuln.status }}</span>
-                        {% else %}
-                            <span class="badge bg-dark">{{ vuln.status }}</span>
-                        {% endif %}
+                        <span class="{{ vuln.status|status_badge_class }}">{{ vuln.status }}</span>
                     </td>
-                    <td class="text-muted small">{{ vuln.created_at|date:"d.m.Y" }}</td>
+                    <td class="text-muted">{{ vuln.created_at|date:"d.m.Y" }}</td>
                 </tr>
                 {% empty %}
                 <tr>

@@ -15,54 +15,54 @@
 
 <!-- Stats -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+                <div class="rounded-3 bg-primary-subtle p-3">
                     <i class="bi bi-collection-fill text-primary fs-4"></i>
                 </div>
                 <div>
                     <div class="text-muted small">Wszystkie</div>
-                    <div class="fw-bold fs-4">{{ total_vulnerabilities }}</div>
+                    <div class="fw-bold fs-3">{{ total_vulnerabilities }}</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-3 bg-danger bg-opacity-10 p-3">
+                <div class="rounded-3 bg-danger-subtle p-3">
                     <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
                 </div>
                 <div>
                     <div class="text-muted small">Krytyczne</div>
-                    <div class="fw-bold fs-4">{{ critical_vulnerabilities }}</div>
+                    <div class="fw-bold fs-3">{{ critical_vulnerabilities }}</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-3 bg-success bg-opacity-10 p-3">
+                <div class="rounded-3 bg-success-subtle p-3">
                     <i class="bi bi-check-circle-fill text-success fs-4"></i>
                 </div>
                 <div>
                     <div class="text-muted small">Naprawione</div>
-                    <div class="fw-bold fs-4">{{ fixed_vulnerabilities }}</div>
+                    <div class="fw-bold fs-3">{{ fixed_vulnerabilities }}</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-3 bg-warning bg-opacity-10 p-3">
+                <div class="rounded-3 bg-warning-subtle p-3">
                     <i class="bi bi-clock-fill text-warning fs-4"></i>
                 </div>
                 <div>
                     <div class="text-muted small">Otwarte</div>
-                    <div class="fw-bold fs-4">{{ open_vulnerabilities }}</div>
+                    <div class="fw-bold fs-3">{{ open_vulnerabilities }}</div>
                 </div>
             </div>
         </div>
@@ -70,12 +70,12 @@
 </div>
 
 <!-- Table -->
-<div class="card border-0 shadow-sm">
+<div class="card shadow-sm">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-            <thead class="bg-dark text-white">
+            <thead class="table-dark">
                 <tr>
-                    <th class="ps-4">Tytuł</th>
+                    <th class="ps-3">Tytuł</th>
                     <th>Poziom</th>
                     <th>Status</th>
                     <th>Projekt</th>
@@ -86,25 +86,25 @@
             <tbody>
                 {% for vulnerability in vulnerabilities %}
                 <tr>
-                    <td class="ps-4">
-                        <a href="{% url 'vulnerability_detail' vulnerability.id %}" class="fw-semibold text-dark text-decoration-none">
+                    <td class="ps-3">
+                        <a href="{% url 'vulnerability_detail' vulnerability.id %}" class="fw-semibold text-dark">
                             {{ vulnerability.title }}
                         </a>
                     </td>
                     <td>
-                        <span class="badge {{ vulnerability.severity|severity_badge_class }}">{{ vulnerability.severity }}</span>
+                        <span class="{{ vulnerability.severity|severity_badge_class }}">{{ vulnerability.severity }}</span>
                     </td>
                     <td>
-                        <span class="badge {{ vulnerability.status|status_badge_class }}">{{ vulnerability.status }}</span>
+                        <span class="{{ vulnerability.status|status_badge_class }}">{{ vulnerability.status }}</span>
                     </td>
-                    <td class="text-muted small">{{ vulnerability.project }}</td>
-                    <td class="text-muted small">{{ vulnerability.created_at|date:"d.m.Y" }}</td>
+                    <td class="text-muted">{{ vulnerability.project }}</td>
+                    <td class="text-muted">{{ vulnerability.created_at|date:"d.m.Y" }}</td>
                     {% if request.user.is_staff %}
-                    <td class="text-end pe-3">
-                        <a href="{% url 'update_vulnerability' id=vulnerability.id %}" class="btn btn-sm btn-outline-secondary me-1">
+                    <td class="pe-3 text-end text-nowrap">
+                        <a href="{% url 'update_vulnerability' id=vulnerability.id %}" class="btn btn-outline-secondary btn-sm">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="{% url 'delete_vulnerability' id=vulnerability.id %}" class="btn btn-sm btn-outline-danger">
+                        <a href="{% url 'delete_vulnerability' id=vulnerability.id %}" class="btn btn-outline-danger btn-sm">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

@@ -14,12 +14,12 @@
     {% endif %}
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card shadow-sm">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-            <thead class="bg-dark text-white">
+            <thead class="table-dark">
                 <tr>
-                    <th class="ps-4">Nazwa</th>
+                    <th class="ps-3">Nazwa</th>
                     <th>Opis</th>
                     <th>Status</th>
                     <th>Data utworzenia</th>
@@ -28,18 +28,18 @@
             <tbody>
                 {% for project in project_list %}
                 <tr>
-                    <td class="ps-4">
-                        <a href="{% url 'project_detail' project.pk %}" class="fw-semibold text-dark text-decoration-none">{{ project.name }}</a>
+                    <td class="ps-3">
+                        <a href="{% url 'project_detail' project.pk %}" class="fw-semibold text-dark">{{ project.name }}</a>
                     </td>
-                    <td class="text-muted small">{{ project.description|truncatechars:80 }}</td>
+                    <td class="text-muted">{{ project.description|truncatechars:80 }}</td>
                     <td>
                         {% if project.is_active %}
-                            <span class="badge bg-success">Aktywny</span>
+                            <span class="badge rounded-pill bg-success-subtle text-success-emphasis">Aktywny</span>
                         {% else %}
-                            <span class="badge bg-secondary">Nieaktywny</span>
+                            <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">Nieaktywny</span>
                         {% endif %}
                     </td>
-                    <td class="text-muted small">{{ project.created_at|date:"d.m.Y" }}</td>
+                    <td class="text-muted">{{ project.created_at|date:"d.m.Y" }}</td>
                 </tr>
                 {% empty %}
                 <tr>
