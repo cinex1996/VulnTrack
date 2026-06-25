@@ -9,28 +9,72 @@
     </div>
     <form method="POST" action="{% url 'mark_all_as_read' %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-outline-dark btn-sm">
+        <button type="submit" class="btn btn-outline-secondary">
             <i class="bi bi-check2-all me-1"></i>Oznacz wszystkie jako przeczytane
         </button>
     </form>
 </div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-dark text-white">
-        <h5 class="mb-0"><i class="bi bi-bell-fill me-2"></i>Powiadomienia</h5>
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white fw-semibold">
+        <i class="bi bi-bell-fill me-2"></i>Powiadomienia
     </div>
     <ul class="list-group list-group-flush">
         {% for notification in notifications %}
-            <li class="list-group-item {% if not notification.is_read %}bg-primary bg-opacity-10{% endif %}">
-                <div class="fw-semibold">{{ notification.title }}</div>
-                <div class="text-muted small">{{ notification.message }}</div>
-                {% if notification.url %}
-                    <a href="{{ notification.url }}" class="small text-primary">{{ notification.url }}</a>
+            <li class="list-group-item d-flex align-items-start gap-3 py-3 {% if not notification.is_read %}bg-primary-subtle{% endif %}">
+
+                <div class="flex-shrink-0 mt-1">
+                    {% if notification.type == 'critical_alert' %}
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger-subtle text-danger" style="width:36px;height:36px;">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </span>
+                    {% elif notification.type == 'status_change' %}
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning-subtle text-warning" style="width:36px;height:36px;">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </span>
+                    {% elif notification.type == 'new_vulnerability' %}
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary" style="width:36px;height:36px;">
+                            <i class="bi bi-bug-fill"></i>
+                        </span>
+                    {% else %}
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary" style="width:36px;height:36px;">
+                            <i class="bi bi-chat-left-text-fill"></i>
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="flex-grow-1" style="min-width: 0;">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-semibold">{{ notification.title }}</span>
+                        {% if not notification.is_read %}
+                            <span class="d-inline-block rounded-circle bg-primary" style="width:8px;height:8px;"></span>
+                        {% endif %}
+                    </div>
+                    <div class="text-muted small mt-1">{{ notification.message }}</div>
+                    <div class="d-flex align-items-center gap-3 mt-2">
+                        <span class="text-muted" style="font-size:0.75rem;">
+                            <i class="bi bi-clock me-1"></i>{{ notification.created_at|date:"d.m.Y H:i" }}
+                        </span>
+                        {% if notification.url %}
+                            <a href="{{ notification.url }}" class="text-primary fw-medium" style="font-size:0.75rem;">
+                                <i class="bi bi-arrow-right-circle me-1"></i>Przejdź
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if not notification.is_read %}
+                <form method="POST" action="{% url 'notification_read' notification.pk %}" class="flex-shrink-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-secondary btn-sm rounded-circle" title="Oznacz jako przeczytane">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                </form>
                 {% endif %}
             </li>
         {% empty %}
-            <li class="list-group-item text-center text-muted py-4">
-                <i class="bi bi-bell-slash d-block fs-4 mb-1"></i>
+            <li class="list-group-item text-center text-muted py-5">
+                <i class="bi bi-bell-slash d-block fs-2 mb-2"></i>
                 Brak powiadomień
             </li>
         {% endfor %}

@@ -2,12 +2,12 @@
 
 {% block content %}
 
-<div class="row justify-content-center">
-    <div class="col-md-7">
+<div class="d-flex justify-content-center">
+    <div class="w-100" style="max-width: 42rem;">
 
         <div class="d-flex align-items-center gap-3 mb-4">
             <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left me-1"></i>Wróć
+                <i class="bi bi-arrow-left"></i>Wróć
             </a>
             <div>
                 <h4 class="fw-bold mb-0">Nowa podatność</h4>
@@ -15,9 +15,9 @@
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
+        <div class="card shadow-sm">
             <div class="card-body p-4">
-                <form method="POST" action="{% url 'create_vulnerability' %}">
+                <form method="POST" action="{% url 'create_vulnerability' %}" class="form-styled">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <div class="d-flex justify-content-end gap-2 mt-3">

@@ -27,3 +27,4 @@ def login_view(request):
             return redirect('index')
     return render(request, 'accounts/login.html')
 
+
