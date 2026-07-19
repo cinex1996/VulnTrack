@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+import sys
 import environ
 import os
 from pathlib import Path
@@ -82,12 +83,8 @@ WSGI_APPLICATION = 'VulnTrackAdmin.wsgi.application'
 
 DATABASES = {
       'default': {
-          'ENGINE': 'django.db.backends.postgresql',
-          'NAME': env('DB_NAME', default='vulntrack'),
-          'USER': env('DB_USER', default='postgres'),
-          'PASSWORD': env('DB_PASSWORD', default='dummy-build-time-password'),
-          'HOST': env('DB_HOST', default='localhost'),
-          'PORT': env('DB_PORT', default='5432'),
+          'ENGINE': 'django.db.backends.sqlite3',
+          'NAME': BASE_DIR / 'db.sqlite3',
       }
   }
 
@@ -139,4 +136,10 @@ CELERY_RESULT_BACKEND = env('CELERY_BROKER_URL', default='redis://localhost:6379
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
 

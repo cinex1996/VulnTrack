@@ -12,12 +12,14 @@ def register_view(request):
             user=register_form.save()
             login(request,user)
             return redirect('index')
-
     else:
         register_form = RegisterForm()
     return render(request, 'accounts/register.html', {'register_form': register_form})
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -25,6 +27,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return redirect('index')
+
     return render(request, 'accounts/login.html')
 
 
