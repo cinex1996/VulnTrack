@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['localhost','127.0.0.1','0.0.0.0','13.61.49.107']
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'notifications',
     'accounts',
     'projects',
