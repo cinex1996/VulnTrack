@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['localhost','127.0.0.1','0.0.0.0','13.61.49.107']
 # Application definition
 
 INSTALLED_APPS = [
+    'django_filters',
     'rest_framework',
     'notifications',
     'accounts',
@@ -146,5 +147,6 @@ if 'test' in sys.argv:
 
 REST_FRAMEWORK = {
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': 10
+        'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS' : ['django_filters.rest_framework.DjangoFilterBackend']
 }
