@@ -26,15 +26,9 @@ class VulnerabilityViewSet(ModelViewSet):
             raise PermissionDenied("You can't update a vulnerability")
         serializer.save()
 
-    @action(detail=False, methods=['get']) # ?ordering=-created_at&page_size=10
-    def latest(self, request):
-        vulns = Vulnerability.objects.all().order_by('-created_at')[:10]
-        serializer = VulnerabilitySerializer(vulns, many=True)
-        return Response(serializer.data)
-
-
 class ProjectViewSet(ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    filter_backends = [DjangoFilterBackend]
     permission_classes = [IsAuthenticated]
-    filter_fields = ('name','is_active')
+    filterset_fields = ['name','is_active']
