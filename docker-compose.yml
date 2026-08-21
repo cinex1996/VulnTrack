@@ -8,3 +8,6 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=dev-secret-key
