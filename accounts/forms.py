@@ -13,3 +13,11 @@ class RegisterForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField(required=True)
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not VulnTrackAccounts.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email doesn't exist")
+        return email
