@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 
 from accounts.forms import RegisterForm, PasswordResetForm
 from django.contrib.auth import login, authenticate
-from kombu import message
+from django.contrib import messages
 
 
 def register_view(request):
