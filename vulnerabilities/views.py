@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from notifications.models import Notification
 from .forms import VulnerabilityForm, CommentForm, StatusUpdateForm
 from .models import Vulnerability, Comment, History
+from .filters import VulnerabilityFilter
 
 
 # Create your views here.
@@ -103,3 +104,8 @@ def delete_vulnerability(request,id):
         vulnerability.delete()
         return redirect("index")
     return render(request, 'vulnerabilities/delete.html', {'vulnerability': vulnerability})
+
+@login_required
+def vulnerability_filter(request):
+    f = VulnerabilityFilter(request.GET, queryset=Vulnerability.objects.all())
+    return render(request, 'vulnerabilities/filter.html', {'filter':f})

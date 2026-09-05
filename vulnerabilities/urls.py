@@ -7,4 +7,5 @@ urlpatterns = [
     path('create/',views.create_vulnerability,name='create_vulnerability'),
     path('edit/<int:id>/',views.update_vulnerability,name='update_vulnerability'),
     path('delete/<int:id>/',views.delete_vulnerability,name='delete_vulnerability'),
+    path('filter/', views.vulnerability_filter, name="vulnerability-filter"),
 ]

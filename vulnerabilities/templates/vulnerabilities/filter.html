@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .filter-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+
+    .filter-header h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .filter-header p {
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    .filter-sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .filter-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .filter-card-header {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .filter-card-header h5 {
+        margin: 0;
+        color: #333;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .filter-card-body {
+        padding: 25px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .btn-search {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-search:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .results-table {
+        border-collapse: collapse;
+    }
+
+    .results-table thead {
+        background: #f8f9fa;
+    }
+
+    .results-table th {
+        color: #667eea;
+        font-weight: 600;
+        padding: 14px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .results-table td {
+        padding: 14px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .results-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .results-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .vulnerability-title {
+        color: #333;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .severity-critical {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    .severity-high {
+        background: linear-gradient(135deg, #ffa94d 0%, #ff922b 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    .severity-medium {
+        background: linear-gradient(135deg, #74c0fc 0%, #4c6ef5 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    .severity-low {
+        background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    .status-badge {
+        background: #e9ecef;
+        color: #495057;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 15px;
+    }
+
+    .results-count {
+        color: #667eea;
+        font-weight: 600;
+        padding: 15px 0;
+        font-size: 0.95rem;
+    }
+
+    .btn-detail {
+        background: #667eea;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .btn-detail:hover {
+        background: #764ba2;
+        color: white;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .filter-header {
+            padding: 25px 20px;
+        }
+        .filter-header h1 {
+            font-size: 1.5rem;
+        }
+        .filter-sidebar {
+            position: static;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
+<div class="filter-header">
+    <h1>🔍 Wyszukiwanie podatności</h1>
+    <p>Szybko znajdź podatności używając filtrów</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-3 filter-sidebar">
+        <div class="filter-card">
+            <div class="filter-card-header">
+                <h5>Filtry</h5>
+            </div>
+            <div class="filter-card-body">
+                <form method="get" action="{% url 'vulnerability-filter' %}">
+                    {% for field in filter.form %}
+                        <div class="form-group">
+                            <label class="form-label">{{ field.label }}</label>
+                            {% if field.field.widget.input_type == 'text' %}
+                                {{ field }}
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-2">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn-search">🔍 Szukaj</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="filter-card">
+            <div class="filter-card-header">
+                <h5>Wyniki wyszukiwania</h5>
+            </div>
+            <div class="filter-card-body">
+                {% if filter.qs %}
+                    <div class="table-responsive">
+                        <table class="table results-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 35%;">Tytuł</th>
+                                    <th style="width: 15%;">Dotkliwość</th>
+                                    <th style="width: 15%;">Status</th>
+                                    <th style="width: 15%;">Zgłaszający</th>
+                                    <th style="width: 12%;">Data</th>
+                                    <th style="width: 8%;">Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vulnerability in filter.qs %}
+                                <tr>
+                                    <td><span class="vulnerability-title">{{ vulnerability.title }}</span></td>
+                                    <td>
+                                        <span class="severity-{{ vulnerability.severity }}">
+                                            {{ vulnerability.get_severity_display }}
+                                        </span>
+                                    </td>
+                                    <td><span class="status-badge">{{ vulnerability.get_status_display }}</span></td>
+                                    <td><small>{{ vulnerability.reporter.username }}</small></td>
+                                    <td><small>{{ vulnerability.created_at|date:"d.m.Y" }}</small></td>
+                                    <td>
+                                        <a href="{% url 'vulnerability_detail' vulnerability.id %}" class="btn-detail">
+                                            Otwórz
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="results-count">
+                        ✓ Znaleziono <strong>{{ filter.qs.count }}</strong> podatności
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h5>Brak wyników</h5>
+                        <p>Nie znaleziono podatności spełniających podane kryteria.</p>
+                        <small class="text-muted">Spróbuj zmienić filtry lub wyszukiwany termin.</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
