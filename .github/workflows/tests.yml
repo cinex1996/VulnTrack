@@ -28,7 +28,7 @@ jobs:
         pip install django-filter djangorestframework factory-boy coverage
 
     - name: Run test with coverage
-      run:
+      run: |
         coverage run manage.py test --no-input --verbosity 2
         coverage report
         coverage xml
