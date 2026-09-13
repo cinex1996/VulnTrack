@@ -23,11 +23,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install django-filter djangorestframework factory-boy
+        pip install django-filter djangorestframework factory-boy, coverage
 
     - name: Run test with coverage
       run:
-        pip install coverage
         coverage run manage.py test --no-input --verbosity 2
         coverage report
         coverage xml
