@@ -27,6 +27,7 @@ jobs:
 
     - name: Run test with coverage
       run:
+        pip install coverage
         coverage run manage.py test --no-input --verbosity 2
         coverage report
         coverage xml
