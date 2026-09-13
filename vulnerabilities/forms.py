@@ -7,22 +7,29 @@ class _BootstrapStyledForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             if isinstance(field.widget, forms.Select):
-                field.widget.attrs.update({'class': 'form-select'})
+                field.widget.attrs.update({"class": "form-select"})
             else:
-                field.widget.attrs.update({'class': 'form-control'})
+                field.widget.attrs.update({"class": "form-control"})
 
 
 class VulnerabilityForm(_BootstrapStyledForm):
     class Meta:
         model = Vulnerability
-        fields = ('title', 'description', 'severity', 'project',)
+        fields = (
+            "title",
+            "description",
+            "severity",
+            "project",
+        )
+
 
 class CommentForm(_BootstrapStyledForm):
     class Meta:
         model = Comment
-        fields = ('content',)
+        fields = ("content",)
+
 
 class StatusUpdateForm(_BootstrapStyledForm):
     class Meta:
         model = Vulnerability
-        fields = ('status',)
+        fields = ("status",)

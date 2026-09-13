@@ -234,38 +234,12 @@
 </style>
 
 <div class="filter-header">
-    <h1>🔍 Wyszukiwanie podatności</h1>
-    <p>Szybko znajdź podatności używając filtrów</p>
+    <h1>🔍 Wyniki wyszukiwania</h1>
+    <p>Podatności pasujące do Twojego zapytania</p>
 </div>
 
 <div class="row">
-    <div class="col-lg-3 filter-sidebar">
-        <div class="filter-card">
-            <div class="filter-card-header">
-                <h5>Filtry</h5>
-            </div>
-            <div class="filter-card-body">
-                <form method="get" action="{% url 'vulnerability-filter' %}">
-                    {% for field in filter.form %}
-                        <div class="form-group">
-                            <label class="form-label">{{ field.label }}</label>
-                            {% if field.field.widget.input_type == 'text' %}
-                                {{ field }}
-                            {% else %}
-                                {{ field }}
-                            {% endif %}
-                            {% if field.errors %}
-                                <div class="text-danger small mt-2">{{ field.errors }}</div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                    <button type="submit" class="btn-search">🔍 Szukaj</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-9">
+    <div class="col-12">
         <div class="filter-card">
             <div class="filter-card-header">
                 <h5>Wyniki wyszukiwania</h5>
@@ -320,5 +294,4 @@
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

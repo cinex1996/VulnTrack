@@ -8,20 +8,66 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vulnerabilities', '0002_alter_vulnerability_severity_and_more'),
+        ("vulnerabilities", "0002_alter_vulnerability_severity_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='History',
+            name="History",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('old_status', models.CharField(choices=[('new', 'NEW'), ('triaged', 'TRIAGED'), ('accepted', 'ACCEPTED'), ('rejected', 'REJECTED'), ('fixed', 'FIXED'), ('closed', 'CLOSED')], max_length=20)),
-                ('new_status', models.CharField(choices=[('new', 'NEW'), ('triaged', 'TRIAGED'), ('accepted', 'ACCEPTED'), ('rejected', 'REJECTED'), ('fixed', 'FIXED'), ('closed', 'CLOSED')], max_length=20)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('changed_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('vulnerability', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vulnerabilities.vulnerability')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "old_status",
+                    models.CharField(
+                        choices=[
+                            ("new", "NEW"),
+                            ("triaged", "TRIAGED"),
+                            ("accepted", "ACCEPTED"),
+                            ("rejected", "REJECTED"),
+                            ("fixed", "FIXED"),
+                            ("closed", "CLOSED"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "new_status",
+                    models.CharField(
+                        choices=[
+                            ("new", "NEW"),
+                            ("triaged", "TRIAGED"),
+                            ("accepted", "ACCEPTED"),
+                            ("rejected", "REJECTED"),
+                            ("fixed", "FIXED"),
+                            ("closed", "CLOSED"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "changed_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "vulnerability",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="vulnerabilities.vulnerability",
+                    ),
+                ),
             ],
         ),
     ]

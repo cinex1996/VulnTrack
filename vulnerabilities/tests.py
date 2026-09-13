@@ -1,6 +1,7 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 from notifications.models import Notification
+from vulnerabilities.forms import VulnerabilityForm
 from vulnerabilities.models import Comment
 from accounts.factories import UserFactory
 from projects.models import Project
@@ -257,3 +258,71 @@ class TestVulnerabilityIndex(TestCase):
         response = self.client.post(reverse("delete_vulnerability", kwargs={"id": vulln.id}))
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Vulnerability.objects.filter(title="Test").exists())
+
+
+@tag("x")
+class TestFilterVulnerabilitiesSearch(TestCase):
+    def test_search_vulnerabilities(self):
+        user = UserFactory()
+        self.client.force_login(user)
+        project = Project.objects.create(name="Test", description="Test")
+        vuln = Vulnerability.objects.create(
+            title="XSSVulnerability", reporter=user, project=project
+        )
+        vuln1 = Vulnerability.objects.create(
+            title="SQLInjection", reporter=user, project=project
+        )
+        vuln2 = Vulnerability.objects.create(
+            title="CSRFAttack", reporter=user, project=project
+        )
+        response = self.client.get(
+            reverse("vulnerability-filter"), {"title": vuln.title}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("filter", response.context)
+        filtered_vulnerabilities = response.context["filter"].qs
+        self.assertEqual(filtered_vulnerabilities.count(), 1)
+        self.assertEqual(filtered_vulnerabilities[0].title, "XSSVulnerability")
+
+    @tag("x")
+    def test_search_not_vulnerabilities_returns_none(self):
+        user = UserFactory()
+        self.client.force_login(user)
+        project = Project.objects.create(name="Test", description="Test")
+        vuln = Vulnerability.objects.create(
+            title="XSSVulnerability", reporter=user, project=project
+        )
+        vuln1 = Vulnerability.objects.create(
+            title="SQLInjection", reporter=user, project=project
+        )
+        vuln2 = Vulnerability.objects.create(
+            title="CSRFAttack", reporter=user, project=project
+        )
+        response = self.client.get(
+            reverse("vulnerability-filter"), {"title": "marcin"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("filter", response.context)
+        filtered_vulnerabilities = response.context["filter"].qs
+        self.assertEqual(filtered_vulnerabilities.count(), 0)
+
+class TestVulnerabilityForm(TestCase):
+    def test_vulnerability_form(self):
+        form = VulnerabilityForm(data={
+            'title': '',
+            'description': 'test',
+            'severity': 'critical',
+            'project': 1
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('title', form.errors)
+
+    def test_vulnerability_form_with_title(self):
+        project = Project.objects.create(name="Test", description="Test")
+        form = VulnerabilityForm(data={
+            'title': 'test',
+            'description': 'test',
+            'severity': 'critical',
+            'project': project.id
+        })
+        self.assertTrue(form.is_valid())

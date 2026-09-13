@@ -6,23 +6,57 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vulnerabilities', '0004_alter_history_vulnerability'),
+        ("vulnerabilities", "0004_alter_history_vulnerability"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='history',
-            name='new_status',
-            field=models.CharField(choices=[('open', 'OPEN'), ('new', 'NEW'), ('triaged', 'TRIAGED'), ('accepted', 'ACCEPTED'), ('rejected', 'REJECTED'), ('fixed', 'FIXED'), ('closed', 'CLOSED')], max_length=20),
+            model_name="history",
+            name="new_status",
+            field=models.CharField(
+                choices=[
+                    ("open", "OPEN"),
+                    ("new", "NEW"),
+                    ("triaged", "TRIAGED"),
+                    ("accepted", "ACCEPTED"),
+                    ("rejected", "REJECTED"),
+                    ("fixed", "FIXED"),
+                    ("closed", "CLOSED"),
+                ],
+                max_length=20,
+            ),
         ),
         migrations.AlterField(
-            model_name='history',
-            name='old_status',
-            field=models.CharField(choices=[('open', 'OPEN'), ('new', 'NEW'), ('triaged', 'TRIAGED'), ('accepted', 'ACCEPTED'), ('rejected', 'REJECTED'), ('fixed', 'FIXED'), ('closed', 'CLOSED')], max_length=20),
+            model_name="history",
+            name="old_status",
+            field=models.CharField(
+                choices=[
+                    ("open", "OPEN"),
+                    ("new", "NEW"),
+                    ("triaged", "TRIAGED"),
+                    ("accepted", "ACCEPTED"),
+                    ("rejected", "REJECTED"),
+                    ("fixed", "FIXED"),
+                    ("closed", "CLOSED"),
+                ],
+                max_length=20,
+            ),
         ),
         migrations.AlterField(
-            model_name='vulnerability',
-            name='status',
-            field=models.CharField(choices=[('open', 'OPEN'), ('new', 'NEW'), ('triaged', 'TRIAGED'), ('accepted', 'ACCEPTED'), ('rejected', 'REJECTED'), ('fixed', 'FIXED'), ('closed', 'CLOSED')], default='new', max_length=20),
+            model_name="vulnerability",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("open", "OPEN"),
+                    ("new", "NEW"),
+                    ("triaged", "TRIAGED"),
+                    ("accepted", "ACCEPTED"),
+                    ("rejected", "REJECTED"),
+                    ("fixed", "FIXED"),
+                    ("closed", "CLOSED"),
+                ],
+                default="new",
+                max_length=20,
+            ),
         ),
     ]

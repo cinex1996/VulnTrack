@@ -25,7 +25,18 @@ jobs:
         pip install -r requirements.txt
         pip install django-filter djangorestframework factory-boy
 
-    - name: Run tests
-      env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      run: python manage.py test ApiVulnTrack.tests
+    - name: Run test with coverage
+      run:
+        coverage run manage.py test --no-input --verbosity 2
+        coverage report
+        coverage xml
+        coverage html    
+    # - name: Upload coverage to Codecov
+    #   uses: codecov/codecov-action@v4
+    #   with:
+    #     token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload coverage reports 
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-reports
